@@ -277,38 +277,31 @@
       z-index: 2;
     }
 
-    .leave-toggle {
-      position: absolute;
-      top: -2px;
-      right: -2px;
-      font-size: 10px;
-      line-height: 1;
-      opacity: 0;
+    .query-result .leave-btn {
+      display: inline-block;
+      margin-left: 10px;
+      padding: 4px 14px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
       cursor: pointer;
-      z-index: 1;
-      transition: opacity 0.15s;
-      /* 增大触摸区域 */
-      padding: 4px;
+      transition: background 0.2s;
+      vertical-align: middle;
     }
 
-    .day:hover .leave-toggle,
-    .day.leave .leave-toggle {
-      opacity: 0.7;
+    .leave-btn.mark {
+      background: rgba(255, 68, 68, 0.3);
+      color: #ff6666;
     }
 
-    .day.leave .leave-toggle {
-      /* 已请假时不再显示独立按钮，用 ::after 的假字就够了 */
-      display: none;
+    .leave-btn.unmark {
+      background: rgba(255, 68, 68, 0.5);
+      color: #fff;
     }
 
-    /* 移动端始终显示请假按钮 */
-    @media (hover: none) and (pointer: coarse) {
-      .leave-toggle {
-        opacity: 0.7;
-      }
-      .day.leave .leave-toggle {
-        display: none;
-      }
+    .leave-btn:hover {
+      background: rgba(255, 68, 68, 0.6);
     }
 
     /* 图例 */
@@ -413,6 +406,10 @@
       saveLeaveDates(dates);
       // 刷新当前月历
       renderCalendar(calendarYear, calendarMonth);
+      // 如果当前查询结果刚好是这个日期，刷新显示
+      if (selectedDateStr === dateStr) {
+        queryDate();
+      }
     }
 
     function getShift(date) {
@@ -443,14 +440,23 @@
       document.getElementById('queryDate').value = today.toISOString().split('T')[0];
     }
 
+    // ========== 当前选中日期 ==========
+    let selectedDateStr = null;
+
     // ========== 日期查询 ==========
     function queryDate() {
       const input = document.getElementById('queryDate').value;
       if (!input) return;
       const date = new Date(input + 'T00:00:00');
       const shift = getShift(date);
+      const ds = input;
+      selectedDateStr = ds;
+      const leave = isLeave(ds);
+      const leaveBtn = leave
+        ? `<button class="leave-btn unmark" onclick="event.stopPropagation(); toggleLeave('${ds}')">取消请假</button>`
+        : `<button class="leave-btn mark" onclick="event.stopPropagation(); toggleLeave('${ds}')">标记请假</button>`;
       document.getElementById('queryResult').innerHTML =
-        `${formatDate(date)} — <span class="shift-badge ${shift.class}">${shift.name}</span>`;
+        `${formatDate(date)} — <span class="shift-badge ${shift.class}">${shift.name}</span>${leaveBtn}`;
     }
 
     // ========== 月历 ==========
@@ -483,7 +489,7 @@
         const todayClass = isToday ? ' today' : '';
         const ds = date.toISOString().split('T')[0];
         const leaveClass = isLeave(ds) ? ' leave' : '';
-        html += `<div class="day ${shift.dayClass}${todayClass}${leaveClass}" data-date="${ds}" data-shift="${shift.name}" title="${ds} ${shift.name}" onclick="handleDayClick(event, '${ds}')" oncontextmenu="handleDayRightClick(event, '${ds}')"><span class="day-num">${d}</span><span class="day-shift">${shift.name}</span><span class="leave-toggle" onclick="handleLeaveToggle(event, '${ds}')" title="标记请假">🔴</span></div>`;
+        html += `<div class="day ${shift.dayClass}${todayClass}${leaveClass}" data-date="${ds}" data-shift="${shift.name}" onclick="selectDate('${ds}')" oncontextmenu="handleDayRightClick(event, '${ds}')"><span class="day-num">${d}</span><span class="day-shift">${shift.name}</span></div>`;
       }
 
       document.getElementById('calendarGrid').innerHTML = html;
@@ -505,28 +511,19 @@
       }
     }
 
-    function queryByCalendar(dateStr) {
+    function selectDate(dateStr) {
       document.getElementById('queryDate').value = dateStr;
       queryDate();
     }
 
-    // 点击格子 → 查询该日
-    function handleDayClick(event, dateStr) {
-      // 如果点的是请假按钮，不触发查询
-      if (event.target.classList.contains('leave-toggle')) return;
-      queryByCalendar(dateStr);
-    }
-
-    // 右键 / 长按 → 标记请假 (PC)
+    // 右键 → 标记请假 (PC)
     function handleDayRightClick(event, dateStr) {
       event.preventDefault();
       toggleLeave(dateStr);
-    }
-
-    // 点请假按钮 → 切换请假状态
-    function handleLeaveToggle(event, dateStr) {
-      event.stopPropagation();
-      toggleLeave(dateStr);
+      // 如果当前查询结果刚好是这个日期，刷新查询结果显示新状态
+      if (selectedDateStr === dateStr) {
+        queryDate();
+      }
     }
 
     // ========== 初始化 ==========
