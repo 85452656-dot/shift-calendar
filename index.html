@@ -13,135 +13,128 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      background: #f5f6f8;
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       padding: 20px;
     }
 
     .container {
       max-width: 520px;
       width: 100%;
-      background: rgba(255, 255, 255, 0.06);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 24px;
-      padding: 32px 28px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #fff;
+      border-radius: 20px;
+      padding: 28px 24px;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+      margin-top: 16px;
     }
 
     h1 {
-      color: #fff;
-      font-size: 24px;
+      color: #1a1a2e;
+      font-size: 22px;
       font-weight: 700;
       text-align: center;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
       letter-spacing: 1px;
     }
 
     .subtitle {
-      color: rgba(255, 255, 255, 0.5);
+      color: #999;
       text-align: center;
       font-size: 13px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     /* 今日班次卡片 */
     .today-card {
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 18px;
-      padding: 24px;
+      background: #f8f9fb;
+      border-radius: 16px;
+      padding: 20px;
       text-align: center;
-      margin-bottom: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 20px;
+      border: 1px solid #eee;
     }
 
     .today-label {
-      color: rgba(255, 255, 255, 0.5);
+      color: #999;
       font-size: 13px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .today-date {
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 15px;
-      margin-bottom: 16px;
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 14px;
     }
 
     .today-shift {
       display: inline-block;
-      font-size: 48px;
+      font-size: 44px;
       font-weight: 900;
-      padding: 12px 40px;
-      border-radius: 16px;
+      padding: 10px 36px;
+      border-radius: 14px;
       letter-spacing: 4px;
     }
 
-    .shift-day { background: linear-gradient(135deg, #f7971e, #ffd200); color: #1a1a2e; }
-    .shift-night { background: linear-gradient(135deg, #3a1c71, #6400d4); color: #fff; }
-    .shift-off { background: linear-gradient(135deg, #11998e, #38ef7d); color: #1a1a2e; }
+    .shift-day { background: #fff3dc; color: #d4850a; }
+    .shift-night { background: #ede4f7; color: #5b2d8e; }
+    .shift-off { background: #daf5e8; color: #1a7a4c; }
 
     /* 日期查询 */
     .query-section {
       display: flex;
       gap: 10px;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
 
     .query-section input[type="date"] {
       flex: 1;
-      padding: 12px 16px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #333;
       font-size: 15px;
       outline: none;
       transition: border-color 0.2s;
     }
 
     .query-section input[type="date"]:focus {
-      border-color: rgba(255, 255, 255, 0.4);
-    }
-
-    .query-section input[type="date"]::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-      cursor: pointer;
+      border-color: #999;
     }
 
     .query-section button {
-      padding: 12px 20px;
-      border-radius: 12px;
+      padding: 10px 18px;
+      border-radius: 10px;
       border: none;
-      background: rgba(255, 255, 255, 0.15);
+      background: #1a1a2e;
       color: #fff;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
     }
 
     .query-section button:hover {
-      background: rgba(255, 255, 255, 0.25);
+      background: #333;
     }
 
     .query-result {
-      color: #fff;
+      color: #333;
       text-align: center;
-      font-size: 16px;
-      margin-bottom: 24px;
-      min-height: 24px;
+      font-size: 15px;
+      margin-bottom: 20px;
+      min-height: 22px;
     }
 
     .query-result .shift-badge {
       display: inline-block;
-      padding: 4px 16px;
-      border-radius: 8px;
+      padding: 3px 14px;
+      border-radius: 6px;
       font-weight: 700;
-      font-size: 18px;
+      font-size: 16px;
       margin: 0 4px;
     }
 
@@ -150,48 +143,48 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .calendar-header .month-label {
-      color: #fff;
+      color: #1a1a2e;
       font-size: 16px;
       font-weight: 600;
     }
 
     .calendar-header button {
-      background: rgba(255, 255, 255, 0.1);
+      background: #f0f0f0;
       border: none;
-      color: #fff;
-      width: 32px;
-      height: 32px;
+      color: #555;
+      width: 30px;
+      height: 30px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
       transition: background 0.2s;
     }
 
     .calendar-header button:hover {
-      background: rgba(255, 255, 255, 0.2);
+      background: #ddd;
     }
 
     .weekdays {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .weekdays span {
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 12px;
-      padding: 6px 0;
+      color: #bbb;
+      font-size: 11px;
+      padding: 4px 0;
     }
 
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
+      gap: 3px;
     }
 
     .calendar-grid .day {
@@ -200,11 +193,11 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
+      transition: transform 0.12s, box-shadow 0.12s;
       position: relative;
-      gap: 1px;
+      gap: 0;
       padding: 2px;
     }
 
@@ -215,15 +208,15 @@
     }
 
     .day-shift {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 600;
       line-height: 1;
-      opacity: 0.85;
+      margin-top: 1px;
     }
 
     .calendar-grid .day:hover {
-      transform: scale(1.08);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transform: scale(1.06);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     }
 
     .calendar-grid .day.empty {
@@ -236,26 +229,26 @@
     }
 
     .day-shift-day {
-      background: rgba(247, 151, 30, 0.25);
-      color: #ffd200;
+      background: #fff8ec;
+      color: #c47a0a;
     }
 
     .day-shift-night {
-      background: rgba(100, 0, 212, 0.3);
-      color: #b388ff;
+      background: #f6f0fc;
+      color: #6b3fa0;
     }
 
     .day-shift-off {
-      background: rgba(56, 239, 125, 0.15);
-      color: #38ef7d;
+      background: #eafaf2;
+      color: #1e8c56;
     }
 
     .day.today {
-      border: 2px solid #fff;
+      border: 2px solid #1a1a2e;
     }
 
     .day.leave {
-      box-shadow: inset 0 0 0 2.5px #ff4444;
+      box-shadow: inset 0 0 0 2.5px #e74c3c;
     }
 
     .day.leave::after {
@@ -263,7 +256,7 @@
       position: absolute;
       top: -3px;
       right: -3px;
-      background: #ff4444;
+      background: #e74c3c;
       color: #fff;
       font-size: 9px;
       font-weight: 700;
@@ -279,11 +272,11 @@
 
     .query-result .leave-btn {
       display: inline-block;
-      margin-left: 10px;
-      padding: 4px 14px;
-      border-radius: 8px;
+      margin-left: 8px;
+      padding: 3px 12px;
+      border-radius: 6px;
       border: none;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
@@ -291,45 +284,45 @@
     }
 
     .leave-btn.mark {
-      background: rgba(255, 68, 68, 0.3);
-      color: #ff6666;
+      background: #ffe0e0;
+      color: #c0392b;
     }
 
     .leave-btn.unmark {
-      background: rgba(255, 68, 68, 0.5);
+      background: #e74c3c;
       color: #fff;
     }
 
     .leave-btn:hover {
-      background: rgba(255, 68, 68, 0.6);
+      opacity: 0.85;
     }
 
     /* 图例 */
     .legend {
       display: flex;
       justify-content: center;
-      gap: 20px;
-      margin-top: 20px;
+      gap: 18px;
+      margin-top: 18px;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 6px;
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 12px;
+      gap: 5px;
+      color: #aaa;
+      font-size: 11px;
     }
 
     .legend-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 3px;
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
     }
 
-    .legend-dot.day { background: #ffd200; }
-    .legend-dot.night { background: #b388ff; }
-    .legend-dot.off { background: #38ef7d; }
-    .legend-dot.leave { background: #ff4444; }
+    .legend-dot.day { background: #f0c040; }
+    .legend-dot.night { background: #9b6fc0; }
+    .legend-dot.off { background: #4cbf80; }
+    .legend-dot.leave { background: #e74c3c; }
   </style>
 </head>
 <body>
@@ -487,7 +480,7 @@
         const shift = getShift(date);
         const isToday = date.getTime() === today.getTime();
         const todayClass = isToday ? ' today' : '';
-        const ds = date.toISOString().split('T')[0];
+        const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
         const leaveClass = isLeave(ds) ? ' leave' : '';
         html += `<div class="day ${shift.dayClass}${todayClass}${leaveClass}" data-date="${ds}" data-shift="${shift.name}" onclick="selectDate('${ds}')" oncontextmenu="handleDayRightClick(event, '${ds}')"><span class="day-num">${d}</span><span class="day-shift">${shift.name}</span></div>`;
       }
