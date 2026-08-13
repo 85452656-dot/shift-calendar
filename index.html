@@ -247,16 +247,11 @@
       border: 2px solid #1a1a2e;
     }
 
-    .day.leave {
-      box-shadow: inset 0 0 0 2.5px #e74c3c;
-    }
-
-    .day.leave::after {
-      content: '假';
+    /* 标记角标系统：每个日期格右上角叠加小标签 */
+    .day .tag-badge {
       position: absolute;
       top: -3px;
       right: -3px;
-      background: #e74c3c;
       color: #fff;
       font-size: 9px;
       font-weight: 700;
@@ -270,7 +265,27 @@
       z-index: 2;
     }
 
-    .query-result .leave-btn {
+    /* 按顺序排列角标，从右上角往左依次展开 */
+    .day .tag-badge:nth-child(3) { right: -3px; }
+    .day .tag-badge:nth-child(4) { right: 11px; }
+    .day .tag-badge:nth-child(5) { right: 25px; }
+
+    .day.tag-leave .tag-badge.leave { background: #e74c3c; }
+    .day.tag-repair .tag-badge.repair { background: #2f80ed; }
+    .day.tag-swap .tag-badge.swap { background: #f2994a; }
+
+    .day.tag-leave { box-shadow: inset 0 0 0 2.5px #e74c3c; }
+    .day.tag-repair { box-shadow: inset 0 0 0 2.5px #2f80ed; }
+    .day.tag-swap { box-shadow: inset 0 0 0 2.5px #f2994a; }
+
+    /* 多标记混合时用中性描边提示 */
+    .day.tag-leave.tag-repair,
+    .day.tag-leave.tag-swap,
+    .day.tag-repair.tag-swap {
+      box-shadow: inset 0 0 0 2.5px #999;
+    }
+
+    .query-result .tag-btn {
       display: inline-block;
       margin-left: 8px;
       padding: 3px 12px;
@@ -279,21 +294,19 @@
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s, opacity 0.2s;
       vertical-align: middle;
     }
 
-    .leave-btn.mark {
-      background: #ffe0e0;
-      color: #c0392b;
-    }
+    .tag-btn.mark.leave { background: #ffe0e0; color: #c0392b; border: 1px solid #f3b6b6; }
+    .tag-btn.mark.repair { background: #e3f0ff; color: #1f5fbe; border: 1px solid #b8d4f5; }
+    .tag-btn.mark.swap { background: #ffeedb; color: #b85c0e; border: 1px solid #f5cfa3; }
 
-    .leave-btn.unmark {
-      background: #e74c3c;
-      color: #fff;
-    }
+    .tag-btn.unmark.leave { background: #e74c3c; color: #fff; }
+    .tag-btn.unmark.repair { background: #2f80ed; color: #fff; }
+    .tag-btn.unmark.swap { background: #f2994a; color: #fff; }
 
-    .leave-btn:hover {
+    .tag-btn:hover {
       opacity: 0.85;
     }
 
@@ -323,6 +336,8 @@
     .legend-dot.night { background: #9b6fc0; }
     .legend-dot.off { background: #4cbf80; }
     .legend-dot.leave { background: #e74c3c; }
+    .legend-dot.repair { background: #2f80ed; }
+    .legend-dot.swap { background: #f2994a; }
   </style>
 </head>
 <body>
@@ -360,6 +375,8 @@
       <div class="legend-item"><span class="legend-dot night"></span> 夜班</div>
       <div class="legend-item"><span class="legend-dot off"></span> 休息</div>
       <div class="legend-item"><span class="legend-dot leave"></span> 请假</div>
+      <div class="legend-item"><span class="legend-dot repair"></span> 检修</div>
+      <div class="legend-item"><span class="legend-dot swap"></span> 串班</div>
     </div>
   </div>
 
@@ -371,32 +388,43 @@
     const SHIFT_CLASS = ['shift-day', 'shift-night', 'shift-off', 'shift-off'];
     const DAY_SHIFT_CLASS = ['day-shift-day', 'day-shift-night', 'day-shift-off', 'day-shift-off'];
 
-    // ========== 请假数据 (localStorage) ==========
-    function getLeaveDates() {
+    // ========== 标记数据 (localStorage) ==========
+    // 三种标记类型：leave=请假, repair=检修, swap=串班
+    const TAG_TYPES = {
+      leave:  { key: 'shift-leave-dates',  label: '请假', char: '假', badgeClass: 'leave' },
+      repair: { key: 'shift-repair-dates', label: '检修', char: '检', badgeClass: 'repair' },
+      swap:   { key: 'shift-swap-dates',   label: '串班', char: '串', badgeClass: 'swap' },
+    };
+
+    function getTagDates(type) {
       try {
-        return JSON.parse(localStorage.getItem('shift-leave-dates') || '[]');
+        return JSON.parse(localStorage.getItem(TAG_TYPES[type].key) || '[]');
       } catch (e) {
         return [];
       }
     }
 
-    function saveLeaveDates(dates) {
-      localStorage.setItem('shift-leave-dates', JSON.stringify(dates));
+    function saveTagDates(type, dates) {
+      localStorage.setItem(TAG_TYPES[type].key, JSON.stringify(dates));
     }
 
-    function isLeave(dateStr) {
-      return getLeaveDates().includes(dateStr);
+    function hasTag(dateStr, type) {
+      return getTagDates(type).includes(dateStr);
     }
 
-    function toggleLeave(dateStr) {
-      const dates = getLeaveDates();
+    function getTags(dateStr) {
+      return Object.keys(TAG_TYPES).filter(t => hasTag(dateStr, t));
+    }
+
+    function toggleTag(type, dateStr) {
+      const dates = getTagDates(type);
       const idx = dates.indexOf(dateStr);
       if (idx >= 0) {
         dates.splice(idx, 1);
       } else {
         dates.push(dateStr);
       }
-      saveLeaveDates(dates);
+      saveTagDates(type, dates);
       // 刷新当前月历
       renderCalendar(calendarYear, calendarMonth);
       // 如果当前查询结果刚好是这个日期，刷新显示
@@ -404,6 +432,9 @@
         queryDate();
       }
     }
+
+    // 兼容旧函数名
+    function toggleLeave(dateStr) { toggleTag('leave', dateStr); }
 
     function getShift(date) {
       const diffDays = Math.floor((date - ANCHOR_DATE) / (1000 * 60 * 60 * 24));
@@ -444,12 +475,17 @@
       const shift = getShift(date);
       const ds = input;
       selectedDateStr = ds;
-      const leave = isLeave(ds);
-      const leaveBtn = leave
-        ? `<button class="leave-btn unmark" onclick="event.stopPropagation(); toggleLeave('${ds}')">取消请假</button>`
-        : `<button class="leave-btn mark" onclick="event.stopPropagation(); toggleLeave('${ds}')">标记请假</button>`;
+      // 生成三种标记的开关按钮
+      let btns = '';
+      for (const type of ['leave', 'repair', 'swap']) {
+        const cfg = TAG_TYPES[type];
+        const active = hasTag(ds, type);
+        btns += active
+          ? `<button class="tag-btn unmark ${cfg.badgeClass}" onclick="event.stopPropagation(); toggleTag('${type}', '${ds}')">取消${cfg.label}</button>`
+          : `<button class="tag-btn mark ${cfg.badgeClass}" onclick="event.stopPropagation(); toggleTag('${type}', '${ds}')">标${cfg.label}</button>`;
+      }
       document.getElementById('queryResult').innerHTML =
-        `${formatDate(date)} — <span class="shift-badge ${shift.class}">${shift.name}</span>${leaveBtn}`;
+        `${formatDate(date)} — <span class="shift-badge ${shift.class}">${shift.name}</span>${btns}`;
     }
 
     // ========== 月历 ==========
@@ -481,8 +517,10 @@
         const isToday = date.getTime() === today.getTime();
         const todayClass = isToday ? ' today' : '';
         const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        const leaveClass = isLeave(ds) ? ' leave' : '';
-        html += `<div class="day ${shift.dayClass}${todayClass}${leaveClass}" data-date="${ds}" data-shift="${shift.name}" onclick="selectDate('${ds}')" oncontextmenu="handleDayRightClick(event, '${ds}')"><span class="day-num">${d}</span><span class="day-shift">${shift.name}</span></div>`;
+        const tags = getTags(ds);
+        const tagClass = tags.length ? ' ' + tags.map(t => 'tag-' + t).join(' ') : '';
+        const badges = tags.map(t => `<span class="tag-badge ${TAG_TYPES[t].badgeClass}">${TAG_TYPES[t].char}</span>`).join('');
+        html += `<div class="day ${shift.dayClass}${todayClass}${tagClass}" data-date="${ds}" data-shift="${shift.name}" onclick="selectDate('${ds}')" oncontextmenu="handleDayRightClick(event, '${ds}')"><span class="day-num">${d}</span><span class="day-shift">${shift.name}</span>${badges}</div>`;
       }
 
       document.getElementById('calendarGrid').innerHTML = html;
